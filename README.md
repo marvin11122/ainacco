@@ -1,0 +1,2 @@
+# ainacco
+ai light vscode
