@@ -1,0 +1,19 @@
+{
+  "name": "ainacco",
+  "version": "0.1.0",
+  "description": "Lightweight Electron/Monaco hybrid with OpenAI Codex (o3/o4) integration scaffolding.",
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "openai": "^4.77.4",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "monaco-editor": "^0.52.2",
+    "typescript": "^5.6.3"
+  }
+}
