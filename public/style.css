@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #1e1e1e;
+  height: 100vh;
+  color: #f5f5f5;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#container {
+  display: flex;
+  height: 100%;
+}
+
+#editor {
+  flex: 1;
+}
+
+#terminal {
+  width: 40%;
+  background: #000;
+}
