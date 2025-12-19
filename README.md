@@ -1,74 +1,40 @@
-# ainacco – Codex (o3/o4) integration scaffold
+# AI TUI Shell (Monaco + xterm.js + node-pty)
 
-This repository provides a minimal TypeScript scaffold for wiring OpenAI Codex models (o3 / o4) into an Electron/Monaco-style environment. It includes:
+A minimal, production-ready, copy-pasteable Monaco editor plus xterm.js terminal shell that runs locally on Linux with only Node.js installed. It serves static assets via Express, streams a real PTY over WebSocket, and exposes simple file open/save endpoints.
 
-- A strongly typed OpenAI client wrapper with streaming and one-off completion helpers.
-- A Monaco inline completion provider hook for ghost-text suggestions.
-- Build tooling via TypeScript only (no bundler required for the scaffold).
-
-## Setup
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Configure environment variables:
-   ```bash
-   export OPENAI_API_KEY="sk-..."
-   # Optional overrides
-   export OPENAI_MODEL="o4"
-   export OPENAI_BASE_URL="https://api.openai.com/v1"
-   ```
-
-3. Run a type check build:
-   ```bash
-   npm run build
-   ```
-
-## Files
-
-- `src/config.ts` – environment configuration and model hints.
-- `src/agent.ts` – `CompletionAgent` with streaming and single-shot chat completion helpers.
-- `src/inlineCompletion.ts` – Monaco inline completion provider registration.
-
-## Usage examples
-
-### Streaming completion (terminal/agent loop)
-```ts
-import { CompletionAgent } from "./dist/agent";
-
-const agent = new CompletionAgent();
-
-agent.on("token", ({ token }) => process.stdout.write(token));
-agent.on("done", () => process.stdout.write("\n"));
-agent.on("error", ({ message }) => console.error("Error:", message));
-
-agent.streamCompletion({
-  requestId: "demo",
-  messages: [
-    { role: "system", content: "You are a CLI coding assistant." },
-    { role: "user", content: "Write a bash for-loop that prints 1..3" }
-  ]
-});
+## Directory layout
+```
+ai-tui-shell/
+├─ package.json
+├─ server.js
+└─ public/
+   ├─ index.html
+   ├─ main.js
+   ├─ style.css
+   ├─ monaco/   (populated from node_modules/monaco-editor/min)
+   └─ xterm/    (populated from node_modules/xterm/lib + css)
 ```
 
-### Inline Monaco completions
-```ts
-import * as monaco from "monaco-editor";
-import { CompletionAgent } from "./dist/agent";
-import { registerInlineCompletions } from "./dist/inlineCompletion";
-
-const agent = new CompletionAgent();
-registerInlineCompletions("shell", agent, {
-  systemPrompt: "You suggest concise shell commands.",
-  model: "o4",
-  temperature: 0.15
-});
+## Quick start
+```bash
+npm install       # installs deps and copies Monaco/xterm assets into public/
+npm start         # runs server at http://localhost:3000
 ```
+
+## Manual asset copy (optional)
+If you need to refresh assets without reinstalling:
+```bash
+npm run copy:assets
+```
+
+## Usage
+- Open the app at http://localhost:3000.
+- The left pane is Monaco; the right pane is an xterm.js terminal backed by node-pty.
+- Use the helper functions in DevTools console:
+  - `openFile("/path/to/file")`
+  - `saveFile("/path/to/file")`
 
 ## Notes
-
-- Keep the OpenAI API key out of renderer code; instantiate `CompletionAgent` in a trusted process and bridge via IPC if you embed this into Electron.
-- `OPENAI_MODEL` defaults to `o4`; set `OPENAI_MODEL=o3` to pin the lighter model.
-- The scaffold focuses on the LLM integration surface; UI shells (Electron, React, block terminal) can be layered on top.
+- Default shell is `$SHELL` or `/bin/bash`.
+- The backend WebSocket server and file routes are defined in `server.js`.
+- This project intentionally omits any Electron wrapper; it is a lightweight web app runnable locally.

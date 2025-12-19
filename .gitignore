@@ -1,4 +1,5 @@
 node_modules
-dist
+public/monaco
+public/xterm
 npm-debug.log*
 .DS_Store
